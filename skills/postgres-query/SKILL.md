@@ -43,10 +43,10 @@ description: PostgreSQL 数据库查询助手。支持查询行情数据、账�
 
 ## 数据库连接配置
 
-这个技能需要 PostgreSQL 数据库连接信息：
+这个技能支持两种查询方式：
 
+### 选项 1：直接连接 PostgreSQL
 ```yaml
-# 需要配置的信息
 host: localhost  # 或远程服务器地址
 port: 5432
 database: your_database_name
@@ -55,10 +55,21 @@ password: your_password
 # 注意：密码不要明文存储，建议使用环境变量
 ```
 
+### 选项 2：通过 API 接口（已配置）
+```yaml
+api_url: http://100.67.45.63:8000
+# 已配置：用户提供的外部 API 服务
+```
+
+**当前配置**：
+- API URL: http://100.67.45.63:8000
+- 状态：✅ 已启用
+
 **配置方式**：
 1. 直接在 SKILL.md 中填写（不安全）
 2. 使用环境变量 `PGPASSWORD`（推荐）
 3. 让用户运行时提供连接参数
+4. 通过已配置的 API 接口查询（当前方式）
 
 ## 查询执行
 
