@@ -203,3 +203,9 @@ This is a starting point. Add your own conventions, style, and rules as you figu
    - 计算规则变更
    - 重要配置修改
    - 用户明确要求的改变
+
+3. **每完成一项工作必须记录到worklog.md**
+   - 完成工作后立即更新 `notes/worklog.md`
+   - 记录工作内容、日期、关键结果
+   - 这是考核依据，必须准确、完整
+   - 工作记录和待办清单分开管理
