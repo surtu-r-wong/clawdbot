@@ -8,6 +8,16 @@
 
 ## ✅ 已完成
 
+- ✅ Git Repository Setup (2025-01-27)
+- ✅ Telegram Access Issue - 添加allowlist配置
+- ✅ Notes & Lists Created - 创建待办清单和点子清单
+- ✅ Doctor Operation Impact - 诊断并记录配置问题
+- ✅ Model Performance & Requirements - 记录模型性能问题
+- ✅ postgres-query skill 完善计算规则 (2026-01-29)
+- ✅ 添加时间校准规则
+- ✅ 添加账户总权益计算规则
+- ✅ 添加盈亏百分比计算
+
 ---
 
 **使用说明：**
