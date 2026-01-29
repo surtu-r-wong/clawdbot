@@ -189,3 +189,17 @@ The goal: Be helpful without being annoying. Check in a few times a day, do usef
 ## Make It Yours
 
 This is a starting point. Add your own conventions, style, and rules as you figure out what works.
+
+---
+
+## 🔒 工作规则
+
+1. **每次更新完必须提交到GitHub**
+   - 不要只保存到本地
+   - 更新完立即执行：git add -A && git commit -m "message" && git push
+   - 本地修改没有意义，必须同步到GitHub
+
+2. **重要修改要记录到MEMORY.md**
+   - 计算规则变更
+   - 重要配置修改
+   - 用户明确要求的改变
