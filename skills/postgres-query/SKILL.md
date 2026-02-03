@@ -520,6 +520,21 @@ console.log(result);
 - `futures_account`: 账号名称, 动态权益（用于计算百分比）
 - `stock_account`: 账号名称, 总资产（用于计算百分比）
 
+**查询方法**：
+```
+当前持仓: GET /api/position
+平仓记录: GET /api/position-close
+
+参数:
+- trade_date: 交易日期 (YYYY-MM-DD)
+- account_name: 账号名称
+- position_name: 头寸名称
+- symbol: 标的代码
+- start_date: 开始日期 (YYYY-MM-DD)
+- end_date: 结束日期 (YYYY-MM-DD)
+- limit: 返回条数 (默认1000，最大10000)
+```
+
 **计算方法**:
 ```
 今日浮动盈亏 = SUM(浮动盈亏) - SUM(手续费)  -- 按账号、头寸名称分组
@@ -544,6 +559,10 @@ console.log(result);
 - **盈亏百分比分母是账户期初权益**（不是昨日的动态权益）
 - 账户期初权益从 `futures_account` 表获取（期货用期初权益，股票用总资产）
 - 按账号分别列出金额和百分比，不要合并账户
+
+**⚠️ 筛选规则**：
+- **计算头寸盈亏时，必须先筛选"头寸名称"，不能把不同头寸名称的数据混在一起计算**
+- **同一头寸名称下有多个标的（比如au2604和ag2604），要全部汇总计算**
 
 ---
 
