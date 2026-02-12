@@ -26,6 +26,21 @@ class BacktestPortfolioSkill(BaseSkill):
             # Extract per-period returns for each strategy.
             per_position_period: dict[str, dict[str, dict]] = {}
             for position, result in strategy_results.items():
+                # 类型检查：如果 result 是字典，需要特殊处理
+                if isinstance(result, dict):
+                    # 字典结果可能是单周期回测结果
+                    if "dates" in result and "daily_returns" in result and "metrics" in result:
+                        best_period = result.get("best_period", "3y")
+                        per_position_period[position] = {
+                            best_period: {
+                                "dates": result.get("dates"),
+                                "daily_returns": result.get("daily_returns"),
+                                "metrics": result.get("metrics"),
+                            }
+                        }
+                        continue
+                
+                # SkillResult 对象的处理
                 if not (result and result.success and result.data):
                     continue
                 pr = result.data.get("period_results")
