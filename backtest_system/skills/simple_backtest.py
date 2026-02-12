@@ -42,17 +42,13 @@ class SimpleBacktestSkill(BaseSkill):
                 evals = int(evals_match.group(1))
 
             # 提取品种列表
-            # 匹配：多RB, 多CU-NI, 多M-LH
-            positions_match = re.search(r"多([A-Z\-]+(?:\s*,\s*多[A-Z\-]+)*)", instruction)
-            if not positions_match:
-                # 尝试匹配单个品种
-                positions_match = re.search(r"多([A-Z\-]+)", instruction)
+            # 找到所有品种：多RB, 多CU-NI, 多M-LH (支持连字符品种名)
+            positions_match = re.findall(r"多[A-Z\-]+", instruction)
             
             if not positions_match:
                 return SkillResult(success=False, error="无法解析品种，格式如：回测 多RB 或 回测 多RB,多CU-NI")
-
-            positions_str = positions_match.group(1)
-            positions = [f"多{p.strip()}" for p in positions_str.split(",")]
+            
+            positions = positions_match  # 已经包含 "多" 前缀
 
             # 提取周期列表
             periods: List[str] = []

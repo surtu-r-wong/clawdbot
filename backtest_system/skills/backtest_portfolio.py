@@ -26,6 +26,13 @@ class BacktestPortfolioSkill(BaseSkill):
             # Extract per-period returns for each strategy.
             per_position_period: dict[str, dict[str, dict]] = {}
             for position, result in strategy_results.items():
+                # 临时修复：如果 result 是字典而不是 SkillResult 对象，跳过
+                if isinstance(result, dict):
+                    # 尝试从字典中提取 period_results
+                    if "period_results" in result and isinstance(result["period_results"], dict):
+                        per_position_period[position] = result["period_results"]
+                    continue
+                
                 if not (result and result.success and result.data):
                     continue
                 pr = result.data.get("period_results")
