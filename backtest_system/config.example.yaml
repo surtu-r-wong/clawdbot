@@ -1,0 +1,23 @@
+# Example configuration (DO NOT put real secrets into git).
+
+database:
+  # Optional: used for `history` and any direct SQL reads/writes.
+  # url: "postgresql://user:pass@host:5432/dbname"
+  url: null
+
+api:
+  # Optional: used for market-data reads and task/log/result writes via HTTP API.
+  read_url: "http://localhost:8000"
+  write_url: "http://localhost:8000"
+  token: ""
+  timeout_seconds: 30
+  # Whether to trust process env proxy settings (HTTP(S)_PROXY/NO_PROXY).
+  # For internal IPs, set to false to avoid proxy-related 502/connection errors.
+  trust_env: false
+
+app:
+  output_dir: "output"
+  non_interactive: true
+  # When a step needs escalation but we're non-interactive:
+  # halt | retry | skip
+  on_escalate: "halt"
