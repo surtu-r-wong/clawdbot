@@ -13,3 +13,12 @@ yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Backtest output
+backtest_system/output/
+backtest_system/__pycache__/
+
