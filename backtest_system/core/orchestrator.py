@@ -173,6 +173,8 @@ class Orchestrator:
                 bt_result = SkillResult(success=True, data=raw_result)
             else:
                 bt_result = SkillResult(success=False, error=raw_result["error"])
+            # 更新 strategy_results 中的值为 SkillResult 对象
+            strategy_results[position] = bt_result
             results["steps"].append({"skill": "backtest_strategy", "position": position, "result": bt_result})
 
         # 3. 组合回测
