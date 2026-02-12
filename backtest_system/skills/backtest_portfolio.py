@@ -35,22 +35,54 @@ class BacktestPortfolioSkill(BaseSkill):
                 # 防御性处理：检查所有可能的数据结构
                 period_data = None
                 
+                print(f"[DEBUG] result 类型: {result_type}")
+                
                 if isinstance(result, dict):
                     # 情况1：result 是字典
                     print(f"[DEBUG]   字典键: {result.keys()}")
-                    if "period_results" in result:
+                    
+                    # 直接检查是否有 period_results
+                    if "period_results" in result and isinstance(result["period_results"], dict):
                         period_data = result["period_results"]
+                        print(f"[DEBUG]   ✓ 直接找到 period_results，周期: {list(period_data.keys())}")
+                    
+                    # 检查是否有完整的回测结果结构（单周期）
+                    elif "dates" in result and "daily_returns" in result and "metrics" in result:
+                        period = result.get("best_period", "3y")  # 默认3y
+                        period_data = {period: result}
+                        print(f"[DEBUG]   ✓ 找到单周期结果，周期: {period}")
+                    
+                    # 检查是否有 data 字段（可能是序列化后的 SkillResult）
                     elif "data" in result and isinstance(result["data"], dict):
-                        period_data = result["data"].get("period_results")
+                        print(f"[DEBUG]   检查 result.data")
+                        if "period_results" in result["data"]:
+                            period_data = result["data"]["period_results"]
+                            print(f"[DEBUG]   ✓ 从 result.data 找到 period_results")
+                        elif "dates" in result["data"]:
+                            period = result["data"].get("best_period", "3y")
+                            period_data = {period: result["data"]}
+                            print(f"[DEBUG]   ✓ 从 result.data 找到单周期结果")
                 
                 elif hasattr(result, 'data') and result.data:
                     # 情况2：result 是 SkillResult 对象
+                    print(f"[DEBUG]   SkillResult.success: {result.success}")
+                    print(f"[DEBUG]   SkillResult.data 类型: {type(result.data).__name__ if result.data else 'None'}")
+                    
                     if isinstance(result.data, dict):
-                        period_data = result.data.get("period_results")
+                        if "period_results" in result.data and isinstance(result.data["period_results"], dict):
+                            period_data = result.data["period_results"]
+                            print(f"[DEBUG]   ✓ 从 SkillResult.data 找到 period_results，周期: {list(period_data.keys())}")
+                        elif "dates" in result.data and "daily_returns" in result.data:
+                            period = result.data.get("best_period", "3y")
+                            period_data = {period: result.data}
+                            print(f"[DEBUG]   ✓ 从 SkillResult.data 找到单周期结果，周期: {period}")
+                    else:
+                        print(f"[DEBUG]   ✗ SkillResult.data 为空或不是字典")
+                else:
+                    print(f"[DEBUG]   ✗ 无法识别的数据结构")
                 
                 if period_data and isinstance(period_data, dict):
                     per_position_period[position] = period_data
-                    print(f"[DEBUG]   ✓ 成功提取 period_results，周期: {list(period_data.keys())}")
                 else:
                     print(f"[DEBUG]   ✗ 无法提取 period_results")
             
