@@ -24,13 +24,26 @@ class BacktestPortfolioSkill(BaseSkill):
                 portfolio_models = ["mean_variance", "equal_weight"]
 
             # Extract per-period returns for each strategy.
+            print(f"[DEBUG backtest_portfolio] 开始解析 strategy_results")
+            print(f"[DEBUG] strategy_results 类型: {type(strategy_results)}")
+            for k, v in strategy_results.items():
+                print(f"[DEBUG]   {k}: {type(v).__name__}")
+            
             per_position_period: dict[str, dict[str, dict]] = {}
             for position, result in strategy_results.items():
+                print(f"[DEBUG] 处理 {position}, result 类型: {type(result).__name__}")
+                
                 # 临时修复：如果 result 是字典而不是 SkillResult 对象，跳过
                 if isinstance(result, dict):
                     # 尝试从字典中提取 period_results
+                    print(f"[DEBUG]   发现字典类型，键: {result.keys()}")
                     if "period_results" in result and isinstance(result["period_results"], dict):
                         per_position_period[position] = result["period_results"]
+                    elif "data" in result and isinstance(result["data"], dict):
+                        # 可能是序列化后的 SkillResult
+                        pr = result["data"].get("period_results")
+                        if isinstance(pr, dict):
+                            per_position_period[position] = pr
                     continue
                 
                 if not (result and result.success and result.data):
