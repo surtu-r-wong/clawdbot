@@ -7,9 +7,10 @@
 """
 import re
 from typing import Dict, List, Optional
+
+# 延迟导入 Orchestrator 避免循环导入
 from backtest_system.skills.base import BaseSkill
 from backtest_system.core.models import SkillResult, TaskConfig
-from backtest_system.core.orchestrator import Orchestrator
 from backtest_system.core.supervisor import Supervisor
 from backtest_system.core.database import DatabaseAPI
 
@@ -100,6 +101,8 @@ class SimpleBacktestSkill(BaseSkill):
                 db_api = get_db_api()
                 self.supervisor = Supervisor(db_api)
 
+            # 延迟导入 Orchestrator 避免循环导入
+            from backtest_system.core.orchestrator import Orchestrator
             orchestrator = Orchestrator(self.supervisor)
             
             # 确保必要的skill已注册
