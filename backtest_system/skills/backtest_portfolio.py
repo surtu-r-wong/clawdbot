@@ -24,34 +24,39 @@ class BacktestPortfolioSkill(BaseSkill):
                 portfolio_models = ["mean_variance", "equal_weight"]
 
             # Extract per-period returns for each strategy.
-            print(f"[DEBUG backtest_portfolio] 开始解析 strategy_results")
+            print(f"[DEBUG backtest_portfolio] ===== 开始解析 strategy_results =====")
             print(f"[DEBUG] strategy_results 类型: {type(strategy_results)}")
-            for k, v in strategy_results.items():
-                print(f"[DEBUG]   {k}: {type(v).__name__}")
             
             per_position_period: dict[str, dict[str, dict]] = {}
             for position, result in strategy_results.items():
-                print(f"[DEBUG] 处理 {position}, result 类型: {type(result).__name__}")
+                result_type = type(result).__name__
+                print(f"[DEBUG] 处理 {position}, result 类型: {result_type}")
                 
-                # 临时修复：如果 result 是字典而不是 SkillResult 对象，跳过
+                # 防御性处理：检查所有可能的数据结构
+                period_data = None
+                
                 if isinstance(result, dict):
-                    # 尝试从字典中提取 period_results
-                    print(f"[DEBUG]   发现字典类型，键: {result.keys()}")
-                    if "period_results" in result and isinstance(result["period_results"], dict):
-                        per_position_period[position] = result["period_results"]
+                    # 情况1：result 是字典
+                    print(f"[DEBUG]   字典键: {result.keys()}")
+                    if "period_results" in result:
+                        period_data = result["period_results"]
                     elif "data" in result and isinstance(result["data"], dict):
-                        # 可能是序列化后的 SkillResult
-                        pr = result["data"].get("period_results")
-                        if isinstance(pr, dict):
-                            per_position_period[position] = pr
-                    continue
+                        period_data = result["data"].get("period_results")
                 
-                if not (result and result.success and result.data):
-                    continue
-                pr = result.data.get("period_results")
-                if isinstance(pr, dict) and pr:
-                    per_position_period[position] = pr
-
+                elif hasattr(result, 'data') and result.data:
+                    # 情况2：result 是 SkillResult 对象
+                    if isinstance(result.data, dict):
+                        period_data = result.data.get("period_results")
+                
+                if period_data and isinstance(period_data, dict):
+                    per_position_period[position] = period_data
+                    print(f"[DEBUG]   ✓ 成功提取 period_results，周期: {list(period_data.keys())}")
+                else:
+                    print(f"[DEBUG]   ✗ 无法提取 period_results")
+            
+            print(f"[DEBUG] 最终 per_position_period: {list(per_position_period.keys())}")
+            print(f"[DEBUG] ===== 解析完成 =====")
+            
             if len(per_position_period) < 2:
                 return SkillResult(success=False, error="需要至少2个成功的策略结果进行组合")
 
