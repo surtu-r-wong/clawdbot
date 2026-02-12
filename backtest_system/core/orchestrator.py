@@ -174,10 +174,12 @@ class Orchestrator:
             else:
                 bt_result = SkillResult(success=False, error=raw_result["error"])
             # 更新 strategy_results 中的值为 SkillResult 对象
+            print(f"[DEBUG] 潬换前 strategy_results 类型: {[(k, type(v).__name__) for k, v in strategy_results.items()]}")
             strategy_results[position] = bt_result
             results["steps"].append({"skill": "backtest_strategy", "position": position, "result": bt_result})
 
         # 3. 组合回测
+        print(f"[DEBUG] 转换后 strategy_results 类型: {[(k, type(v).__name__) for k, v in strategy_results.items()]}")
         portfolio_result = self._execute_skill("backtest_portfolio", {
             "strategy_results": strategy_results,
             "combo_range": config.combo_range,
