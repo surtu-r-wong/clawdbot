@@ -25,7 +25,7 @@ def cli(ctx: click.Context, config_path: str | None):
     ctx.obj = load_config(config_path)
 
 @cli.command()
-@click.argument('instruction', required=True, help='自然语言回测指令，例: "回测 多RB 3年" 或 "组合回测 多RB,多CU-NI 3年,5年"')
+@click.argument('instruction', required=True)
 @click.pass_obj
 def simple(cfg: BacktestConfig, instruction):
     """简单模式 - 用自然语言指令执行回测"""
