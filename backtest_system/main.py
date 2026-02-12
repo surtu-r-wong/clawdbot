@@ -8,6 +8,7 @@ from backtest_system.skills.validate_data import ValidateDataSkill
 from backtest_system.skills.backtest_strategy import BacktestStrategySkill
 from backtest_system.skills.backtest_portfolio import BacktestPortfolioSkill
 from backtest_system.skills.generate_report import GenerateReportSkill
+from backtest_system.skills.simple_backtest import SimpleBacktestSkill
 
 @click.group()
 @click.option(
@@ -22,6 +23,24 @@ from backtest_system.skills.generate_report import GenerateReportSkill
 def cli(ctx: click.Context, config_path: str | None):
     """自动策略回测系统"""
     ctx.obj = load_config(config_path)
+
+@cli.command()
+@click.argument('instruction', required=True, help='自然语言回测指令，例: "回测 多RB 3年" 或 "组合回测 多RB,多CU-NI 3年,5年"')
+@click.pass_obj
+def simple(cfg: BacktestConfig, instruction):
+    """简单模式 - 用自然语言指令执行回测"""
+    db_api = DatabaseAPI(cfg.database.url, cfg.api)
+    supervisor = Supervisor(
+        db_api,
+        non_interactive=cfg.app.non_interactive,
+        on_escalate=cfg.app.on_escalate,
+        log_dir=cfg.app.output_dir,
+    )
+    
+    skill = SimpleBacktestSkill(supervisor)
+    result = skill.execute(instruction)
+    
+    print(result.data.get("output", "执行完成"))
 
 @cli.command()
 @click.option(
